@@ -46,6 +46,8 @@ MAIN PROC
         DIGIT_CHECK:
         CMP AL, 30H
         JGE GREATER_30H
+        JMP HERE
+        
         GREATER_30H:
             CMP AL, 39H
             JLE DIGIT_SATISFIED

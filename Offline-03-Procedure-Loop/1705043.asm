@@ -8,8 +8,8 @@
     operator_msg DB CR, LF,  'Enter Operator + - * / : $'
     input2_msg DB CR, LF,  'Enter Operand 2 : $'
     output_msg DB CR, LF,  'Ans = $'
-    num1 DB '?'
-    num2 DB '?'
+    num1 DW '?'
+    num2 DW '?'
     operator DB '?'
     ans DB '?'
 
@@ -44,6 +44,9 @@ MAIN PROC
     CMP AL, '*'
     JE MULTIPLICATION
     
+    CMP AL, '/'
+    JE DIVISION
+    JMP here
     ADDITION:
         POP AX
         MOV BX, AX
@@ -53,6 +56,7 @@ MAIN PROC
         ADD AX, BX
         
         CALL OUTDEC
+        JMP here
     
     SUBSTRACTION:
         POP AX
@@ -63,6 +67,7 @@ MAIN PROC
         SUB AX, BX
         
         CALL OUTDEC
+        JMP here
     
     MULTIPLICATION:
         POP AX
@@ -73,12 +78,34 @@ MAIN PROC
         IMUL BX
         
         CALL OUTDEC
+        JMP here
+        
+    DIVISION:
+        ;POP AX
+        ;MOV BX, AX
+        
+        CALL INDEC
+        MOV BX, AX
+        
+        POP AX
+        
+        XOR DX, DX
+        CWD
+        
+        IDIV BX
+        
+        CALL OUTDEC
+        
+        ;MOV AX, DX
+        ;CALL OUTDEC
+        
+        JMP here
     
     ;POP AX
     
     ;CALL OUTDEC
     
-    
+    here:
     MOV AH, 4CH
     INT 21H 
     

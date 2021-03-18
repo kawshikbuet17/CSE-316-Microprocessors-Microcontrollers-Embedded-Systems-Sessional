@@ -4,15 +4,41 @@
 .DATA
     CR EQU 0DH
     LF EQU 0AH
-    
-    INPUT_MSG DB '?? $', CR, LF
-    
-    OPERAND_1 DB '?'
-    OPERAND_2 DB '?'
-    
-
+    input1_msg DB CR, LF,  'Enter Operand 1 : $'
+    operator_msg DB CR, LF,  'Enter Operator + - * / : $'
+    input2_msg DB CR, LF,  'Enter Operand 2 : $'
+    output_msg DB CR, LF,  'Ans = $'
+    num1 DB '?'
+    num2 DB '?'
+    ans DB '?'
 
 .CODE
+
+MAIN PROC
+    
+    ; INITIALIZE DS
+    MOV AX, @DATA
+    MOV DS, AX
+
+    CALL INDEC 
+
+    PUSH AX
+
+    MOV AH, 2
+    MOV DL, 0DH
+    INT 21H
+    MOV DL, 0AH
+    INT 21H
+    
+    POP AX
+    
+    CALL OUTDEC
+    
+    
+    MOV AH, 4CH
+    INT 21H 
+    
+MAIN ENDP
 
 INDEC PROC
     
@@ -83,3 +109,51 @@ INDEC PROC
     INT 21H
     JMP @BEGIN
 INDEC ENDP
+
+
+OUTDEC PROC
+    PUSH AX
+    PUSH BX
+    PUSH CX
+    PUSH DX
+    
+    OR AX, AX
+    JGE @END_IF1
+    
+    PUSH AX
+    MOV DL, '-'
+    MOV AH, 2
+    INT 21H
+    POP AX
+    NEG AX
+    
+@END_IF1:
+    XOR CX, CX
+    MOV BX, 10D
+    
+@REPEAT1:
+    XOR DX, DX
+    DIV BX
+    PUSH DX
+    INC CX
+    
+    OR AX, AX
+    JNE @REPEAT1
+    
+    MOV AH, 2
+
+@PRINT_LOOP:
+    POP DX
+    OR DL, 30H
+    INT 21H
+    LOOP @PRINT_LOOP
+    
+    POP DX
+    POP CX
+    POP BX
+    POP AX
+    
+    RET
+OUTDEC ENDP
+
+END MAIN

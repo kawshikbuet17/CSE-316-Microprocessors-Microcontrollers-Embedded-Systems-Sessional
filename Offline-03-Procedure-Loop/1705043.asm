@@ -27,11 +27,7 @@ MAIN PROC
     PUSH AX
     MOV num1, AX
     
-    MOV AH, 2
-    MOV DL, 0DH
-    INT 21H
-    MOV DL, 0AH
-    INT 21H
+    CALL \N
     
     ;take operator
     MOV AH, 1
@@ -62,11 +58,7 @@ MAIN PROC
         
         MOV ans, AX
         
-        MOV AH, 2
-        MOV DL, 0DH
-        INT 21H
-        MOV DL, 0AH
-        INT 21H
+        CALL \N
         
         MOV AX, ans
         
@@ -84,11 +76,7 @@ MAIN PROC
         MOV ans, AX
         
         
-        MOV AH, 2
-        MOV DL, 0DH
-        INT 21H
-        MOV DL, 0AH
-        INT 21H
+        CALL \N
         
         MOV AX, ans
         
@@ -106,11 +94,7 @@ MAIN PROC
         MOV ans, AX
         
         
-        MOV AH, 2
-        MOV DL, 0DH
-        INT 21H
-        MOV DL, 0AH
-        INT 21H
+        CALL \N
         
         MOV AX, ans
         
@@ -134,11 +118,7 @@ MAIN PROC
         MOV ans, AX
         
         
-        MOV AH, 2
-        MOV DL, 0DH
-        INT 21H
-        MOV DL, 0AH
-        INT 21H
+        CALL \N
         
         MOV AX, ans
         
@@ -274,5 +254,16 @@ OUTDEC PROC
     
     RET
 OUTDEC ENDP
+
+
+\N PROC
+    
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        RET
+\N ENDP
 
 END MAIN

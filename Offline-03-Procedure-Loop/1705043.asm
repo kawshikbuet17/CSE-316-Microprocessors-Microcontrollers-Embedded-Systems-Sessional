@@ -40,6 +40,10 @@ MAIN PROC
     CMP AL, '-'
     JE SUBSTRACTION
     
+    
+    CMP AL, '*'
+    JE MULTIPLICATION
+    
     ADDITION:
         POP AX
         MOV BX, AX
@@ -57,6 +61,16 @@ MAIN PROC
         CALL INDEC
      
         SUB AX, BX
+        
+        CALL OUTDEC
+    
+    MULTIPLICATION:
+        POP AX
+        MOV BX, AX
+        
+        CALL INDEC
+     
+        IMUL BX
         
         CALL OUTDEC
     

@@ -8,10 +8,11 @@
     operator_msg DB CR, LF,  'Enter Operator + - * / : $'
     input2_msg DB CR, LF,  'Enter Operand 2 : $'
     output_msg DB CR, LF,  'Ans = $'
+    
     num1 DW '?'
     num2 DW '?'
     operator DB '?'
-    ans DB '?'
+    ans DW '?'
 
 .CODE
 
@@ -24,7 +25,8 @@ MAIN PROC
     CALL INDEC 
 
     PUSH AX
-
+    MOV num1, AX
+    
     MOV AH, 2
     MOV DL, 0DH
     INT 21H
@@ -34,6 +36,8 @@ MAIN PROC
     ;take operator
     MOV AH, 1
     INT 21H
+    
+    MOV operator, AL
     CMP AL, '+'
     JE ADDITION
     
@@ -46,7 +50,8 @@ MAIN PROC
     
     CMP AL, '/'
     JE DIVISION
-    JMP here
+    JMP EXIT
+    
     ADDITION:
         POP AX
         MOV BX, AX
@@ -55,8 +60,18 @@ MAIN PROC
      
         ADD AX, BX
         
+        MOV ans, AX
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV AX, ans
+        
         CALL OUTDEC
-        JMP here
+        JMP EXIT
     
     SUBSTRACTION:
         POP AX
@@ -66,8 +81,19 @@ MAIN PROC
      
         SUB AX, BX
         
+        MOV ans, AX
+        
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV AX, ans
+        
         CALL OUTDEC
-        JMP here
+        JMP EXIT
     
     MULTIPLICATION:
         POP AX
@@ -77,8 +103,19 @@ MAIN PROC
      
         IMUL BX
         
+        MOV ans, AX
+        
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV AX, ans
+        
         CALL OUTDEC
-        JMP here
+        JMP EXIT
         
     DIVISION:
         ;POP AX
@@ -94,18 +131,29 @@ MAIN PROC
         
         IDIV BX
         
+        MOV ans, AX
+        
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV AX, ans
+        
         CALL OUTDEC
         
         ;MOV AX, DX
         ;CALL OUTDEC
         
-        JMP here
+        JMP EXIT
     
     ;POP AX
     
     ;CALL OUTDEC
     
-    here:
+    EXIT:
     MOV AH, 4CH
     INT 21H 
     

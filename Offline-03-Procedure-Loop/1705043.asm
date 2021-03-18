@@ -10,6 +10,7 @@
     output_msg DB CR, LF,  'Ans = $'
     num1 DB '?'
     num2 DB '?'
+    operator DB '?'
     ans DB '?'
 
 .CODE
@@ -30,9 +31,23 @@ MAIN PROC
     MOV DL, 0AH
     INT 21H
     
-    POP AX
+    ;take operator
+    MOV AH, 1
+    INT 21H
+    CMP AL, '+'
+    JE ADDITION
+    ADDITION:
+        POP AX
+        MOV BX, AX
+        
+        CALL INDEC
+        ADD AX, BX
+        
+        CALL OUTDEC
     
-    CALL OUTDEC
+    ;POP AX
+    
+    ;CALL OUTDEC
     
     
     MOV AH, 4CH
@@ -47,9 +62,9 @@ INDEC PROC
     PUSH DX 
     
 @BEGIN:
-    MOV AH, 2
-    MOV DL, '?'
-    INT 21H
+    ;MOV AH, 2
+    ;MOV DL, '?'
+    ;INT 21H
     
     XOR BX, BX
     

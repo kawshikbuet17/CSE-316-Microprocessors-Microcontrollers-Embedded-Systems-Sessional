@@ -5,7 +5,7 @@
     CR EQU 0DH
     LF EQU 0AH
     input1_msg DB CR, LF,  'Enter Operand 1 : $'
-    operator_msg DB CR, LF,  'Enter Operator + - * / : $'
+    operator_msg DB CR, LF,  'Enter Operator : $'
     input2_msg DB CR, LF,  'Enter Operand 2 : $'
     output_msg DB CR, LF,  'Ans = $'
     
@@ -21,13 +21,20 @@ MAIN PROC
     ; INITIALIZE DS
     MOV AX, @DATA
     MOV DS, AX
+    
+    LEA DX, input1_msg
+    MOV AH, 9
+    INT 21H
 
     CALL INDEC 
 
     PUSH AX
     MOV num1, AX
+      
     
-    CALL \N
+    LEA DX, operator_msg
+    MOV AH, 9
+    INT 21H
     
     ;take operator
     MOV AH, 1
@@ -52,13 +59,20 @@ MAIN PROC
         POP AX
         MOV BX, AX
         
+        LEA DX, input2_msg
+        MOV AH, 9
+        INT 21H
+        
         CALL INDEC
      
         ADD AX, BX
         
         MOV ans, AX
         
-        CALL \N
+        
+        LEA DX, output_msg
+        MOV AH, 9
+        INT 21H
         
         MOV AX, ans
         
@@ -69,14 +83,21 @@ MAIN PROC
         POP AX
         MOV BX, AX
         
+        
+        LEA DX, input2_msg
+        MOV AH, 9
+        INT 21H
+        
         CALL INDEC
      
-        SUB AX, BX
+        SUB BX, AX
         
-        MOV ans, AX
+        MOV ans, BX
         
         
-        CALL \N
+        LEA DX, output_msg
+        MOV AH, 9
+        INT 21H
         
         MOV AX, ans
         
@@ -87,6 +108,11 @@ MAIN PROC
         POP AX
         MOV BX, AX
         
+        
+        LEA DX, input2_msg
+        MOV AH, 9
+        INT 21H
+        
         CALL INDEC
      
         IMUL BX
@@ -94,16 +120,20 @@ MAIN PROC
         MOV ans, AX
         
         
-        CALL \N
+        LEA DX, output_msg
+        MOV AH, 9
+        INT 21H
         
         MOV AX, ans
         
         CALL OUTDEC
         JMP EXIT
         
-    DIVISION:
-        ;POP AX
-        ;MOV BX, AX
+    DIVISION:    
+        
+        LEA DX, input2_msg
+        MOV AH, 9
+        INT 21H
         
         CALL INDEC
         MOV BX, AX
@@ -118,24 +148,20 @@ MAIN PROC
         MOV ans, AX
         
         
-        CALL \N
+        LEA DX, output_msg
+        MOV AH, 9
+        INT 21H
         
         MOV AX, ans
         
         CALL OUTDEC
-        
-        ;MOV AX, DX
-        ;CALL OUTDEC
-        
+
         JMP EXIT
     
-    ;POP AX
-    
-    ;CALL OUTDEC
     
     EXIT:
-    MOV AH, 4CH
-    INT 21H 
+        MOV AH, 4CH
+        INT 21H 
     
 MAIN ENDP
 

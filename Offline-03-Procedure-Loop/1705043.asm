@@ -36,12 +36,27 @@ MAIN PROC
     INT 21H
     CMP AL, '+'
     JE ADDITION
+    
+    CMP AL, '-'
+    JE SUBSTRACTION
+    
     ADDITION:
         POP AX
         MOV BX, AX
         
         CALL INDEC
+     
         ADD AX, BX
+        
+        CALL OUTDEC
+    
+    SUBSTRACTION:
+        POP AX
+        MOV BX, AX
+        
+        CALL INDEC
+     
+        SUB AX, BX
         
         CALL OUTDEC
     

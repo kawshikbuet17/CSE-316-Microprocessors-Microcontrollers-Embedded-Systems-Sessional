@@ -6,6 +6,7 @@
     LF EQU 0AH
     input1_msg DB CR, LF,  'Enter Operand 1 : $'
     operator_msg DB CR, LF,  'Enter Operator : $'
+    wrong_operator_msg DB CR, LF,  'Wrong Operator $'
     input2_msg DB CR, LF,  'Enter Operand 2 : $'
     output_msg DB CR, LF,  'Ans = $'
     
@@ -53,7 +54,11 @@ MAIN PROC
     
     CMP AL, '/'
     JE DIVISION
-    JMP EXIT
+    
+    CMP AL, 'q'
+    JE QUIT
+    
+    JMP WRONG_OPERATOR
     
     ADDITION:
         POP AX
@@ -77,7 +82,7 @@ MAIN PROC
         MOV AX, ans
         
         CALL OUTDEC
-        JMP EXIT
+        JMP QUIT
     
     SUBSTRACTION:
         POP AX
@@ -102,7 +107,7 @@ MAIN PROC
         MOV AX, ans
         
         CALL OUTDEC
-        JMP EXIT
+        JMP QUIT
     
     MULTIPLICATION:
         POP AX
@@ -127,7 +132,7 @@ MAIN PROC
         MOV AX, ans
         
         CALL OUTDEC
-        JMP EXIT
+        JMP QUIT
         
     DIVISION:    
         
@@ -156,10 +161,14 @@ MAIN PROC
         
         CALL OUTDEC
 
-        JMP EXIT
+        JMP QUIT
     
-    
-    EXIT:
+    WRONG_OPERATOR:
+        LEA DX, wrong_operator_msg
+        MOV AH, 9
+        INT 21H
+        
+    QUIT:
         MOV AH, 4CH
         INT 21H 
     
@@ -172,10 +181,6 @@ INDEC PROC
     PUSH DX 
     
 @BEGIN:
-    ;MOV AH, 2
-    ;MOV DL, '?'
-    ;INT 21H
-    
     XOR BX, BX
     
     XOR CX, CX
@@ -196,9 +201,11 @@ INDEC PROC
     
 @REPEAT2:
     CMP AL, '0'
-    JNGE @NOT_DIGIT
+    JNGE @AGAIN
+
     CMP AL, '9'
-    JNLE @NOT_DIGIT
+    JNLE @AGAIN
+    
     
     AND AX, 000FH
     PUSH AX
@@ -207,6 +214,8 @@ INDEC PROC
     MUL BX
     POP BX
     ADD BX, AX
+    
+    @AGAIN:
     
     MOV AH, 1
     INT 21H
@@ -226,13 +235,6 @@ INDEC PROC
     POP BX
     RET
 
-@NOT_DIGIT:
-    MOV AH, 2
-    MOV DL, 0DH
-    INT 21H
-    MOV DL, 0AH
-    INT 21H
-    JMP @BEGIN
 INDEC ENDP
 
 
@@ -283,7 +285,6 @@ OUTDEC ENDP
 
 
 \N PROC
-    
         MOV AH, 2
         MOV DL, 0DH
         INT 21H

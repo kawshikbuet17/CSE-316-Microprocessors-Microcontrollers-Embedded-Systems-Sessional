@@ -72,20 +72,13 @@ MAIN PROC
         INT 21H
         
         CALL INDEC
+        MOV num2, AX
      
         ADD AX, BX              ;num1+num2
         
         MOV ans, AX             ;ans = num1+num2
         
-        
-        LEA DX, output_msg
-        MOV AH, 9
-        INT 21H
-        
-        MOV AX, ans
-        
-        CALL OUTDEC
-        JMP QUIT
+        JMP PRINT
     
     SUBSTRACTION:
         POP AX
@@ -97,20 +90,13 @@ MAIN PROC
         INT 21H
         
         CALL INDEC
+        MOV num2, AX
      
         SUB BX, AX
         
         MOV ans, BX
-        
-        
-        LEA DX, output_msg
-        MOV AH, 9
-        INT 21H
-        
-        MOV AX, ans
-        
-        CALL OUTDEC
-        JMP QUIT
+                
+        JMP PRINT
     
     MULTIPLICATION:
         POP AX
@@ -122,20 +108,13 @@ MAIN PROC
         INT 21H
         
         CALL INDEC
+        MOV num2, AX
      
         IMUL BX
         
         MOV ans, AX
-        
-        
-        LEA DX, output_msg
-        MOV AH, 9
-        INT 21H
-        
-        MOV AX, ans
-        
-        CALL OUTDEC
-        JMP QUIT
+                
+        JMP PRINT
         
     DIVISION:    
         
@@ -144,6 +123,8 @@ MAIN PROC
         INT 21H
         
         CALL INDEC
+        MOV num2, AX
+        
         MOV BX, AX
         
         POP AX
@@ -154,16 +135,11 @@ MAIN PROC
         IDIV BX
         
         MOV ans, AX
-        
-        
-        LEA DX, output_msg
-        MOV AH, 9
-        INT 21H
-        
-        MOV AX, ans
-        
-        CALL OUTDEC
 
+        JMP PRINT
+    
+    PRINT:
+        CALL PRINT_ALL_PROC
         JMP QUIT
     
     WRONG_OPERATOR:
@@ -300,6 +276,55 @@ OUTDEC ENDP
         MOV DL, 0AH
         INT 21H
         RET
-\N ENDP
+\N ENDP 
+
+
+;print procedure
+PRINT_ALL_PROC PROC
+    CALL \N
+    MOV AH, 2
+    MOV DL, '['
+    INT 21H
+    
+    MOV AX, num1
+    CALL OUTDEC
+    
+    MOV AH, 2
+    MOV DL, ']'
+    INT 21H
+    
+    MOV AH, 2
+    MOV DL, operator
+    INT 21H
+    
+    MOV AH, 2
+    MOV DL, '['
+    INT 21H
+    
+    MOV AX, num2
+    CALL OUTDEC
+    
+    MOV AH, 2
+    MOV DL, ']'
+    INT 21H
+    
+    MOV AH, 2
+    MOV DL, '='
+    INT 21H
+    
+    MOV AH, 2
+    MOV DL, '['
+    INT 21H
+    
+    MOV AX, ans
+    CALL OUTDEC
+    
+    MOV AH, 2
+    MOV DL, ']'
+    INT 21H
+    
+    CALL \N
+    RET
+PRINT_ALL_PROC ENDP
 
 END MAIN

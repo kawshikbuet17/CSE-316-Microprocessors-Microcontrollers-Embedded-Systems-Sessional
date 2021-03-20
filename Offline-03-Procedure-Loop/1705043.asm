@@ -23,6 +23,7 @@ MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
     
+    CONTINUOUS_INP:
     ; num1 input message
     LEA DX, input1_msg
     MOV AH, 9
@@ -140,12 +141,19 @@ MAIN PROC
     
     PRINT:
         CALL PRINT_ALL_PROC
+        MOV AL, operator
+        CMP AL, 'q'
+        JNE CONTINUOUS_INP
         JMP QUIT
     
     WRONG_OPERATOR:
         LEA DX, wrong_operator_msg
         MOV AH, 9
         INT 21H
+        CALL \N
+        MOV AL, operator
+        CMP AL, 'q'
+        JNE CONTINUOUS_INP
         
     QUIT:
         MOV AH, 4CH

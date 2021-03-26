@@ -6,7 +6,7 @@
     LF EQU 0AH
     input1_msg DB CR, LF,  'Enter 2 x 2 Matrix1 : $'  
     input2_msg DB CR, LF,  'Enter 2 x 2 Matrix2 : $'
-    
+    output_msg DB CR, LF,  'Matrix1 + Matrix2 : $'
     
     matrix1 DW 4 DUP (?)
     matrix2 DW 4 DUP (?)
@@ -16,8 +16,7 @@
     N DW 2
 
     how_many DW '?'
-    cnt DW '?'
-    operator DB '?'
+
     off DW '?'
 
 .CODE
@@ -42,13 +41,21 @@ MAIN PROC
     MOV how_many, AX
     
     LEA SI, matrix1
-    MOV CX, 4
+    MOV CX, how_many
     INSERT_MATRIX1:
+        CMP CX, 2
+        JNE no_newline1
+        CALL \N
+        
+        no_newline1:
+         
         MOV AH, 1
         INT 21H
         
         AND AX, 000FH
         MOV [SI], AX
+        
+        
         
         ADD SI, 2
         CALL \T
@@ -60,8 +67,14 @@ MAIN PROC
     CALL \N
     
     LEA SI, matrix2
-    MOV CX, 4
+    MOV CX, how_many
     INSERT_MATRIX2:
+        CMP CX, 2
+        JNE no_newline2
+        CALL \N
+        
+        no_newline2:
+        
         MOV AH, 1
         INT 21H
         
@@ -75,7 +88,7 @@ MAIN PROC
      
      
     LEA SI, matrix3
-    MOV CX, 4
+    MOV CX, how_many
     MOV off, 0
     INSERT_MATRIX3:
         LEA SI, matrix1
@@ -97,11 +110,21 @@ MAIN PROC
         CALL \T
         LOOP INSERT_MATRIX3
     
+    CALL \N 
+    
+    LEA DX, output_msg
+    MOV AH, 9
+    INT 21H
     CALL \N
     
     LEA SI, matrix3
-    MOV CX, 4
+    MOV CX, how_many
     PRINT_MATRIX3:
+        CMP CX, 2
+        JNE no_newline3
+        CALL \N
+        
+        no_newline3:
         MOV AX, [SI]
         CALL OUTDEC
         CALL \T
@@ -168,19 +191,42 @@ OUTDEC ENDP
 
 ;new line procedure
 \N PROC
+        
+        PUSH DX
+        PUSH CX
+        PUSH BX
+        PUSH AX
+     
         MOV AH, 2
         MOV DL, 0DH
         INT 21H
         MOV DL, 0AH
         INT 21H
+        
+        POP AX
+        POP BX
+        POP CX
+        POP DX
+        
         RET
-\N ENDP
+\N ENDP 
 
 
 \T PROC
+        PUSH DX
+        PUSH CX
+        PUSH BX
+        PUSH AX
+        
         MOV AH, 2
         MOV DL, ' '
         INT 21H
+        
+        POP AX
+        POP BX
+        POP CX
+        POP DX
+        
         RET
 \T ENDP
 END MAIN

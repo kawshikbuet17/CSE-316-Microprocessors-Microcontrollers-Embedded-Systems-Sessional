@@ -8,6 +8,8 @@
     
     n DW '?'
     ans DW '?'
+    arr DW 100 DUP(0)
+    i DW '?'
 
 .CODE
 
@@ -32,15 +34,35 @@ MAIN PROC
 
     CALL \N 
       
-    MOV AX, n
-    PUSH AX
-    CALL FIBONACCI
+    ;MOV AX, n
+    ;PUSH AX
+    ;CALL FIBONACCI
     
     
-    CALL OUTDEC    
-    MOV ans, AX
+    ;CALL OUTDEC    
+    ;MOV ans, AX
     
+    LEA SI, arr
     
+    MOV CX, n
+    MOV i, 1
+    SAVE_FIB:
+        MOV AX, i
+        PUSH AX
+        CALL FIBONACCI
+        MOV [SI], AX
+        ADD SI, 2
+        INC i
+        LOOP SAVE_FIB
+    
+    MOV CX, n
+    LEA SI, arr
+    PRINT_FIB:
+        MOV AX, [SI]
+        CALL OUTDEC
+        CALL \N
+        ADD SI, 2
+        LOOP PRINT_FIB
     
     QUIT:
         MOV AH, 4CH
@@ -84,7 +106,9 @@ FIBONACCI PROC
         
         POP BX          ; get F(n-1) 
         ADD AX, BX      ; F(n-1) + F(n-2)
-                
+        
+        ;CALL OUTDEC
+        ;CALL \N        
         
     RETURN:
         POP BP
@@ -208,11 +232,23 @@ OUTDEC ENDP
 
 ;new line procedure
 \N PROC
+        
+        PUSH DX
+        PUSH CX
+        PUSH BX
+        PUSH AX
+     
         MOV AH, 2
         MOV DL, 0DH
         INT 21H
         MOV DL, 0AH
         INT 21H
+        
+        POP AX
+        POP BX
+        POP CX
+        POP DX
+        
         RET
 \N ENDP 
 

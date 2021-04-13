@@ -10,59 +10,50 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
-
-volatile unsigned int pattern_P[8] = { 0b11111111, 0b00000000, 0b00000000, 0b00100111, 0b00100111, 0b00000111, 0b00000111, 0b11111111};
+volatile unsigned char pattern_P[8] = { 0b11111111, 0b00000000, 0b00000000, 0b00100111, 0b00100111, 0b00000111, 0b00000111, 0b11111111};
+volatile unsigned char params= 0b10000000;
+volatile unsigned char toggle = 1;
 
 ISR(INT0_vect){
-	PORTC = ~PORTC;
+	toggle = ~toggle;
 }
 
-void baseState(void){
-	PORTA = 0b10000000;
-	PORTB = 0b11111111;
-	_delay_ms(.5);
-	
-	PORTA = 0b01000000;
-	PORTB = 0b00000000;
-	_delay_ms(.5);
-	
-	PORTA = 0b00100000;
-	PORTB = 0b00000000;
-	_delay_ms(.5);
-	
-	PORTA = 0b00010000;
-	PORTB = 0b00100111;
-	_delay_ms(.5);
-	
-	PORTA = 0b00001000;
-	PORTB = 0b00100111;
-	_delay_ms(.5);
-	
-	PORTA = 0b00000100;
-	PORTB = 0b00000111;
-	_delay_ms(.5);
-	
-	PORTA = 0b00000010;
-	PORTB = 0b00000111;
-	_delay_ms(.5);
-	
-	PORTA = 0b00000001;
-	PORTB = 0b11111111;
-	_delay_ms(.5);
+
+void drawPattern_P(){
+	PORTA = params;
+	for (int i=0; i<8; i++){
+		PORTB = pattern_P[i];
+		_delay_ms(.5);
+		PORTA = PORTA>>1;
+		if (!PORTA)
+		{
+			PORTA = 0b10000000;
+		}
+	}
 }
 
 int main(void)
 {
-    DDRD = 0xFF; //column output
-    DDRB = 0xFF; //row output
-	PORTC = 0b00000001;
-	GICR = (1<<INT0); //STEP3
-	MCUCR = MCUCR & 0b11110011;//STEP4
+    DDRA = 0xFF;
+    DDRB = 0xFF;
+	
+	GICR = (1<<INT0);
+	MCUCR = MCUCR & 0b00000011;
+	sei();
+	
     while (1) 
     {
-		baseState();
-		//PORTA = PORTA>>1;	
-		//_delay_ms(100);	
+		for(int i=0; i<50; i++){
+			drawPattern_P();
+		}
+		
+		if((toggle & 0b00000001)){
+			_delay_ms(80);	
+			params = params >> 1;
+			if(!params){
+				params = 0b10000000;
+			}
+		}
     }
 }
 
